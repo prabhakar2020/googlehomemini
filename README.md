@@ -1,1 +1,1 @@
-# googlehomemini
+# Flask demo project Heroko deployment

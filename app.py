@@ -1,0 +1,46 @@
+from __future__ import print_function
+from future.standard_library import install_aliases
+install_aliases()
+
+from urllib.parse import urlparse, urlencode
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
+
+import json
+import os
+
+from flask import Flask
+from flask import request
+from flask import Flask, make_response, request
+import json
+import sqlite3 as sq
+
+
+# A very simple Flask Hello World application for you to get started with
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello from Flask!'
+
+@app.route('/webhook', methods = ['POST'])
+def webhook():
+    if request.method == 'POST':
+        req = request.get_json(silent = True, force = True)
+
+        queryResults = req.get('queryResult')
+        parameters = queryResults.get('parameters', '')
+        speech = "Hello "+str(parameters.get('name', ''))+", glad to meet you!!"
+        response = {
+            'fulfillmentText': speech
+        }
+        res = json.dumps(response, indent = 4)
+        r = make_response(res)
+        r.headers["Content-Type"] = "application/json"
+        return r
+
+if __name__ == '__main__':
+    port = int(os.getenv('PORT', 5000))
+
+    app.run(debug=False, port=port, host='0.0.0.0')
